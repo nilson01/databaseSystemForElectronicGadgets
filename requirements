@@ -1,0 +1,7 @@
+flask==1.1.2
+jinja2==2.11.3
+pip==21.0.1
+python==3.6.13
+setuptools==52.0.0
+sqlite==3.35.4
+
