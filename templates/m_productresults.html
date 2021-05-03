@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manufacturer Products</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+
+      <style>
+
+        table, td, th {
+            border: 1px solid #aaa;
+        }
+
+        table{
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th {
+        height: 30px;
+        }
+
+        td {
+            text-align: center;
+            padding: 5px;
+        }
+        </style>
+</head>
+<body>
+    <div >
+            <h1 style="text-align: center">Manufacturer Products Results: {{ manufacturer }}</h1>
+            <h3 style="text-align: center">Personal Computers</h3>
+        {% if Pcs|length > 1 %}
+              <table>
+                <tr>
+                    <th>Maker</th>
+                    <th>Model_Number</th>
+                    <th>Type</th>
+                    <th>Speed</th>
+                    <th>Ram</th>
+                    <th>Hard Disk Size</th>
+                    <th>Price</th>
+
+                </tr>
+                {% for pc in Pcs %}
+                    <tr>
+                        <td>{{ pc[0] }}</td>
+                        <td>{{ pc[1] }}</td>
+                        <td>{{ pc[2] }}</td>
+                        <td>{{ pc[3] }}</td>
+                        <td>{{ pc[4] }}</td>
+                        <td>{{ pc[5] }}</td>
+                        <td>{{ pc[6] }}</td>
+
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p> Not PC available.</p>
+        {% endif %}
+    </div><br><br>
+
+    <div>
+      <h3 style="text-align: center">Laptops</h3>
+        {% if Laptops|length > 1 %}
+              <table>
+                <tr>
+                    <th>Maker</th>
+                    <th>Model_Number</th>
+                    <th>Type</th>
+                    <th>Speed</th>
+                    <th>Ram</th>
+                    <th>Hard Disk Size</th>
+                    <th>Screen Size</th>
+                    <th>Price</th>
+
+                </tr>
+                {% for laptop in Laptops %}
+                    <tr>
+                        <td>{{ laptop[0] }}</td>
+                        <td>{{ laptop[1] }}</td>
+                        <td>{{ laptop[2] }}</td>
+                        <td>{{ laptop[3] }}</td>
+                        <td>{{ laptop[4] }}</td>
+                        <td>{{ laptop[5] }}</td>
+                        <td>{{ laptop[6] }}</td>
+                        <td>{{ laptop[7] }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p> Not Laptop available.</p>
+        {% endif %}
+    </div><br><br>
+
+    <div>
+      <h3 style="text-align: center">Printers</h3>
+         {% if Printers|length > 1 %}
+              <table>
+                <tr>
+                    <th>Maker</th>
+                    <th>Model_Number</th>
+                    <th>Color</th>
+                    <th>Type</th>
+                    <th>Price</th>
+
+                </tr>
+                    {% for printer in Printers %}
+                        <tr>
+                            <td>{{ printer[0] }}</td>
+                            <td>{{ printer[1] }}</td>
+                            <td>{{ printer[2] }}</td>
+                            <td>{{ printer[3] }}</td>
+                            <td>{{ printer[4] }}</td>
+                        </tr>
+                    {% endfor %}
+            </table>
+          {% else %}
+            <p style="margin-left:750px"> Not Printers available.</p>
+        {% endif %}
+
+    </div><br><br>
+      <button class="btn" type="submit" value=" Go Back!"> <a style="text-decoration:none" href="/manufacturer_products"> Go Back! </a></button>
+
+    </body>
+</html>

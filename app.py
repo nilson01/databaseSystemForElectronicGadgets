@@ -5,42 +5,191 @@
 
 import sqlite3
 from flask import Flask, render_template, request
-from flask import g
+
 app = Flask(__name__)
 
-
-DATABASE = 'ncps5.db'
-
-def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
-    return db
-
-def query_db(query, args=(), one=False):
-    cur = get_db().execute(query, args)
-    rv = cur.fetchall()
-    cur.close()
-    return (rv[0] if rv else None) if one else rv
+InsertProduct = "INSERT INTO Products(maker, model, type) VALUES( ?, ?,'PC');"
+InsertPCs = "INSERT INTO PCs(model, speed, ram, hd, price) VALUES(?, ?, ?, ?, ?);"
+query_Pc = "SELECT P.maker, P.model, P.type, Pc.speed, Pc.ram, Pc.hd, Pc.price from Products P, PCs Pc  where P.maker = (?) and P.model = Pc.model;"
+query_L = "SELECT P.maker, P.model, P.type, L.speed, L.ram, L.hd, L.screen, L.price from Products P, Laptops L where   P.maker = (?) and P.model = L.model;"
+query_Pn = "SELECT P.maker, P.model, Pn.color, Pn.type, Pn.price from Products P, Printers Pn  where  P.maker = (?) and P.model = Pn.model;"
 
 
+
+# Homepage
 @app.route('/', methods=['GET', 'POST']) # To render Homepage
 def home_page():
+    return render_template('homepage.html')
+
+
+# A
+
+def get_results():
+    conn = sqlite3.connect('ncps5.db')
+    cur = conn.cursor()
+    results = []
+    query_p = "SELECT Pr.maker, PCs.model, PCs.speed, PCs.price from Products Pr, PCs where Pr.model = PCs.model"
+    res = cur.execute(query_p)
+
+    for row in res:
+        results.append(row)
+        print(row)
+    conn.close()
+    return results
+
+@app.route('/pcsearch', methods=['GET', 'POST']) # To render PC Search
+def pc_search():
     return render_template('pcsearch.html')
+
 
 @app.route('/pcresults',  methods=['GET', 'POST']) # To render results
 def pc_results():
     # if (request.method=='POST'):
     search_price = str(request.form['content'])
-    print(search_price)
+    results = get_results()
 
-    results = []
-    query_p = "SELECT Pr.maker, PCs.model, PCs.speed from Products Pr, PCs where Pr.model = PCs.model "
-    for row in query_db(query_p):
-        results.append(row)
-        print(row)
+    for i in range(len(results)):
+        x = abs(int(search_price) - results[i][3])
+        results[i] = [x] + list(results[i])
+    results = sorted(results)
 
     return render_template('pcresults.html', results=results)
+
+
+
+# B
+
+def check_laptop(speed, ram, hd, screen):
+    conn = sqlite3.connect('ncps5.db')
+    cur = conn.cursor()
+    results = []
+    query_p = "SELECT P.maker, L.model, L.speed, L.ram, L.hd, L.screen, L.price from Laptops L, Products P where P.model = L.model and L.speed >=speed and L.ram>=ram and L.hd>=hd and L.screen>= screen"
+    res = cur.execute(query_p)
+    for row in res:
+        results.append(row)
+    conn.close()
+    return results
+
+@app.route('/laptopMinRequirement', methods=['GET', 'POST']) # To render Homepage
+def laptop_Requirement():
+    return render_template('min_requirement.html')
+
+@app.route('/minRequirementresults',  methods=['GET', 'POST']) # To render results
+def min_requirement():
+    # if (request.method=='POST'):
+    speed = int(request.form['speed'])
+    ram = int(request.form['ram'])
+    hd = int(request.form['hd'])
+    screen = int(request.form['screen'])
+    result_laptop = check_laptop(speed, ram, hd, screen)
+    return render_template('laptopresults.html', results=result_laptop)
+
+
+# C
+
+def find_products(manufacturer):
+    conn = sqlite3.connect('ncps5.db')
+    cur = conn.cursor()
+    res = cur.execute(query_Pc, (manufacturer,))
+    Pcs= []
+    for row in res:
+        Pcs.append(row)
+    res = cur.execute(query_L, (manufacturer,))
+    Laptops = []
+    for row in res:
+        Laptops.append(row)
+    res = cur.execute(query_Pn, (manufacturer,))
+    Printers = []
+    for row in res:
+        Printers.append(row)
+    conn.close()
+    return Pcs, Laptops, Printers
+
+@app.route('/manufacturer_products', methods=['GET', 'POST']) # To render Homepage
+def manufacturer_products():
+    return render_template('manufacturer_products.html')
+
+@app.route('/m_productresults',  methods=['GET', 'POST']) # To render results
+def manu_prod_res():
+    # if (request.method=='POST'):
+    manufacturer = str(request.form['manufacturer'])
+    Pcs, Laptops, Printers = find_products(manufacturer)
+
+    return render_template('m_productresults.html', manufacturer=manufacturer, Pcs=Pcs, Laptops=Laptops, Printers=Printers)
+
+
+
+# D
+
+def findsystem(budget,speed):
+    conn = sqlite3.connect('ncps5.db')
+    cur = conn.cursor()
+    results = []
+    query_p = f"SELECT Pn.color, Pcs.model, Pn.model from Pcs, Printers Pn where Pcs.price + Pn.price <={budget} and Pcs.speed>={speed}"
+    res = cur.execute(query_p)
+    for row in res:
+        results.append(row)
+    conn.close()
+    return results
+
+@app.route('/findsystem', methods=['GET', 'POST']) # To render Homepage
+def find_system():
+    return render_template('findsystem.html')
+
+@app.route('/systemresults',  methods=['GET', 'POST']) # To render results
+def system_results():
+    # if (request.method=='POST'):
+    budget = int(request.form['budget'])
+    speed = int(request.form['speed'])
+    model_numbers = findsystem(budget, speed)
+    model_numbers = sorted(model_numbers, reverse= True)
+    print(model_numbers)
+    return render_template('systemresults.html', model_numbers= model_numbers)
+
+
+
+# E
+
+def check_PC(search_maker, search_model, search_speed, search_ram, search_hd, search_price):
+    conn = sqlite3.connect('ncps5.db')
+    cur = conn.cursor()
+    res = cur.execute(f"SELECT model from Products where Products.model = {search_model}")
+    cPC = []
+    for row in res:
+        cPC.append(row)
+    print(cPC, "CPC")
+
+    if len(cPC) != 0:
+        conn.close()
+        return "<h1>WARNING: The PC information is already in the Database</h1>"
+    else:
+        cur.execute(InsertProduct, (search_maker, search_model))
+        cur.execute(InsertPCs, (search_model, search_speed, search_ram, search_hd, search_price))
+        conn.commit()
+        query_p = "SELECT * from Products"
+        res = cur.execute(query_p)
+        for row in res:
+            print(row)
+        conn.close()
+        return "<h1>New PC information added to the database</h1>"
+
+@app.route('/checkpc', methods=['GET', 'POST']) # To render Homepage
+def check_pc():
+    return render_template('checkpc.html')
+
+@app.route('/checkPcResults',  methods=['GET', 'POST'])
+def pc_check_results():
+    # if (request.method=='POST'):
+    search_maker = str(request.form['maker'])
+    search_model = int(request.form['model'])
+    print(search_model)
+    search_speed = float(request.form['speed'])
+    search_ram = int(request.form['ram'])
+    search_hd = int(request.form['hd'])
+    search_price = float(request.form['price'])
+    result_message = check_PC(search_maker, search_model, search_speed, search_ram, search_hd, search_price)
+    return result_message
+
 
 
 if __name__ == '__main__':
@@ -48,56 +197,3 @@ if __name__ == '__main__':
 
 
 
-
-
-
-"""
-cur = conn.cursor()
-
-# Create tables
-cur.execute('''DROP TABLE IF EXISTS Products''')
-cur.execute('''CREATE TABLE Products(
-                maker varchar(20),
-                model real,
-                type varchar(20),
-                PRIMARY KEY(model))''')
-
-cur.execute('''DROP TABLE IF EXISTS PCs''')
-cur.execute('''CREATE TABLE PCs(
-                    model real,
-                    speed integer,
-                    ram integer,
-                    hd integer,
-                    price real,
-                    PRIMARY KEY(model))''')
-
-cur.execute('''DROP TABLE IF EXISTS Laptops''')
-cur.execute('''CREATE TABLE Laptops(
-                model real,
-                speed integer,
-                ram integer,
-                hd integer,
-                screen integer,
-                price real,
-                PRIMARY KEY(model))''')
-
-
-cur.execute('''DROP TABLE IF EXISTS Printers''')
-cur.execute('''CREATE TABLE Printers(
-                model real,
-                color boolean,
-                type varchar(10),
-                price real,
-                PRIMARY KEY(model))''')
-
-# Insert rows of data
-cur.execute("INSERT INTO Products VALUES('Apple', 111, 'Laptop')")
-cur.execute("INSERT INTO Products VALUES('Sony', 222, 'Printer')")
-cur.execute("INSERT INTO Products VALUES('Microsoft', 333, 'PC')")
-
-cur.execute("INSERT INTO PCs VALUES(333, 16, 8, 20, 150)")
-cur.execute("INSERT INTO Laptops VALUES(111, 20, 6, 23, 10, 100)")
-cur.execute("INSERT INTO Printers VALUES(222, TRUE, 'laser-jet', 200)")
-# Save (commit) the changes
-conn.commit()
-"""

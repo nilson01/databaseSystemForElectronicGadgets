@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" >
-    <head>
-        <title>PC Results</title>
-<!--        <link rel="stylesheet" href="./style.css">-->
-        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Laptop Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-        <style>
+    <style>
 
         table, td, th {
             border: 1px solid #aaa;
@@ -25,26 +25,38 @@
         }
         </style>
 
-    </head>
-    <body>
-      <div class="container">
+</head>
+<body>
+
+ <div class="container">
         <h1 style="text-align: center">PC search results</h1>
           <table>
         <tr>
             <th>Maker</th>
-            <th>Model_Number</th>
-            <th>Speed</th>
+            <th>Model</th>
+            <th>speed</th>
+            <th>RAM</th>
+            <th>Hard disk size</th>
+            <th>Screen size</th>
+            <th>Price</th>
         </tr>
         {% for result in results %}
             <tr>
+                <td>{{ result[0] }}</td>
                 <td>{{ result[1] }}</td>
                 <td>{{ result[2] }}</td>
                 <td>{{ result[3] }}</td>
+                <td>{{ result[4] }}</td>
+                <td>{{ result[5] }}</td>
+                <td>{{ result[6] }}</td>
             </tr>
         {% endfor %}
     </table>
       </div>
         <br>
-      <button class="btn" type="submit" value=" Go Back!"> <a style="text-decoration:none" href="/pcsearch"> Go Back! </a></button>
-    </body>
+      <button class="btn" type="submit" value=" Go Back!"> <a href="/laptopMinRequirement"> Go Back! </a></button>
+
+
+
+</body>
 </html>

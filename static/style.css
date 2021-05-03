@@ -53,8 +53,33 @@ input[type="text"]{
   margin-top: 5px;
 }
 
+.btn_h{
+  display: flex;
+  text-decoration: none;
+  border-radius: 100px;
+  padding: 10px 20px;
+  margin-top: 5px;
+}
+
+
 .fbtn{
       display: block;
 
 }
 
+table, td, th {
+    border: 1px solid #aaa;
+}
+
+table{
+    border-collapse: collapse;
+    width: 100%;
+}
+th {
+height: 30px;
+}
+
+td {
+    text-align: center;
+    padding: 5px;
+}

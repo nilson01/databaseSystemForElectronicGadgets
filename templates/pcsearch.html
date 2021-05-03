@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -15,11 +16,13 @@
 
         <div class="form" >
             <form action="/pcresults" method="POST">
-                <input type="text" name="content" id="content">
+                <label for="content">Include the price feasible for you: </label><br>
+                <input type="text" name="content" id="content" required>
                 <input class="btn" type="submit" value="Search">
             </form>
         </div>
     </div>
+<button class="btn" type="submit" value=" Go Back!"> <a style="text-decoration:none"href="/"> Go Back to main page! </a></button>
 
 </body>
 </html>

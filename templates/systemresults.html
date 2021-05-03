@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PC System Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+
+    <style>
+
+        table, td, th {
+            border: 1px solid #aaa;
+        }
+
+        table{
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th {
+        height: 30px;
+        }
+
+        td {
+            text-align: center;
+            padding: 5px;
+        }
+        </style>
+</head>
+
+<body>
+    <div>
+      <h1 style="text-align: center">PC System Results</h1>
+              <table>
+                <tr>
+                    <th>PC Model_Number</th>
+                    <th>Printer Model_Number</th>
+                </tr>
+                {% for model_num in model_numbers %}
+                    <tr>
+                        <td>{{ model_num[1] }}</td>
+                        <td>{{ model_num[2] }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+    </div>
+</body>
+</html>

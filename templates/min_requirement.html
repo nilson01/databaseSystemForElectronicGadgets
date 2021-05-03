@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Minimum Requirement: Laptop</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/style.css') }}">
+
+</head>
+<body>
+
+    <div class="container">
+
+            <h1 style="text-align: center">Minimum Requirement: Laptop</h1>
+
+            <div class="form" >
+
+                <form action="/minRequirementresults" method="POST">
+
+                    <label for="speed"> Speed </label><br>
+                    <input type="text" name="speed" id="speed"><br><br>
+
+                    <label for="ram"> RAM</label><br>
+                    <input type="text" name="ram" id="ram"><br><br>
+
+                    <label for="hd"> Hard-disk size</label><br>
+                    <input type="text" name="hd" id="hd"><br><br>
+
+                    <label for="screen"> Screen size </label><br>
+                    <input type="text" name="screen" id="screen"><br><br>
+
+                    <input class="btn" type="submit" value="Look up">
+
+                </form>
+            </div>
+    </div>
+
+<button class="btn" type="submit" value=" Go Back!"> <a style="text-decoration:none" href="/"> Go Back to main page! </a></button>
+
+</body>
+</html>
