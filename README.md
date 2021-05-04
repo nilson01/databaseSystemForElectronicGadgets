@@ -1,4 +1,5 @@
 # CSE305HW5
+**Nilson Chapagain, Crispen Chisina Tatenda**
 
 #### Database system we chose.
 * SQLite DB 
