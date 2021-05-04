@@ -1,8 +1,4 @@
 
-# Installing the dependencies from requirements folder: pip install -r requirements.txt
-# if access is denied in the environment use following command: pip install --user -r requirements.txt
-# TO GET THE LIST OF ALL THE DEPENDENCIES USED: pip freeze
-
 import sqlite3
 from flask import Flask, render_template, request
 
@@ -13,7 +9,6 @@ InsertPCs = "INSERT INTO PCs(model, speed, ram, hd, price) VALUES(?, ?, ?, ?, ?)
 query_Pc = "SELECT P.maker, P.model, P.type, Pc.speed, Pc.ram, Pc.hd, Pc.price from Products P, PCs Pc  where P.maker = (?) and P.model = Pc.model;"
 query_L = "SELECT P.maker, P.model, P.type, L.speed, L.ram, L.hd, L.screen, L.price from Products P, Laptops L where   P.maker = (?) and P.model = L.model;"
 query_Pn = "SELECT P.maker, P.model, Pn.color, Pn.type, Pn.price from Products P, Printers Pn  where  P.maker = (?) and P.model = Pn.model;"
-
 
 
 # Homepage
@@ -112,7 +107,7 @@ def manufacturer_products():
 @app.route('/m_productresults',  methods=['GET', 'POST']) # To render results
 def manu_prod_res():
     # if (request.method=='POST'):
-    manufacturer = str(request.form['manufacturer'])
+    manufacturer = str(request.form['manufacturer']).lower()
     Pcs, Laptops, Printers = find_products(manufacturer)
 
     return render_template('m_productresults.html', manufacturer=manufacturer, Pcs=Pcs, Laptops=Laptops, Printers=Printers)
@@ -125,7 +120,7 @@ def findsystem(budget,speed):
     conn = sqlite3.connect('ncps5.db')
     cur = conn.cursor()
     results = []
-    query_p = f"SELECT Pn.color, Pcs.model, Pn.model from Pcs, Printers Pn where Pcs.price + Pn.price <={budget} and Pcs.speed>={speed}"
+    query_p = f"SELECT Pn.color, PCs.model, Pn.model from PCs, Printers Pn where PCs.price + Pn.price <={budget} and PCs.speed>={speed}"
     res = cur.execute(query_p)
     for row in res:
         results.append(row)
@@ -180,16 +175,15 @@ def check_pc():
 @app.route('/checkPcResults',  methods=['GET', 'POST'])
 def pc_check_results():
     # if (request.method=='POST'):
-    search_maker = str(request.form['maker'])
-    search_model = int(request.form['model'])
-    print(search_model)
-    search_speed = float(request.form['speed'])
-    search_ram = int(request.form['ram'])
-    search_hd = int(request.form['hd'])
-    search_price = float(request.form['price'])
-    result_message = check_PC(search_maker, search_model, search_speed, search_ram, search_hd, search_price)
+    maker = str(request.form['maker']).lower()
+    model = int(request.form['model'])
+    print(model)
+    speed = float(request.form['speed'])
+    ram = int(request.form['ram'])
+    hd = int(request.form['hd'])
+    price = float(request.form['price'])
+    result_message = check_PC(maker, model, speed, ram, hd, price)
     return result_message
-
 
 
 if __name__ == '__main__':
