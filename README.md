@@ -1,7 +1,7 @@
-# CSE305HW5
+# Database Management Systems
 **Nilson Chapagain, Crispen Chisina Tatenda**
 
-#### Database system we chose.
+#### Database system used.
 * SQLite DB 
 
 #### URL used to access the pages.
